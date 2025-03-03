@@ -4,13 +4,32 @@ import time
 from typing import Protocol
 
 class MultiplicationAlgorithm(Protocol):
+    """
+    This is an interface for a multiplication algorithm
+    """
     def get_name(self) -> str:
+        """Method for returning the name of the algorithm"""
         ...
+
     def multiply(self, num1: int, num2: int) -> int:
+        """Method for doing the algorithm
+
+        Parameters
+        ----------
+        num1: int
+            The first number that you are multiplying with 
+        num2: int
+            The second number that you are multiplying with
+
+        Returns
+        -------
+        int
+            The product between num1 and num2
+
+        """
         ...
 
 class NaiveMultiplication:
-
     def get_name(self) -> str:
         return "naive-multiplication"
 
@@ -32,7 +51,6 @@ class NaiveMultiplication:
         return (ac << (mid << 1)) + (ad_plus_bc << mid) + bd
 
 class KaratsubaAlgorithm:
-    
     def get_name(self) -> str:
         return "karatsuba"
 
@@ -52,6 +70,19 @@ class KaratsubaAlgorithm:
         return (ac << (mid << 1)) + (ad_plus_bc << mid) + bd
 
 def time_results(multi_alg: MultiplicationAlgorithm, num1: int, num2: int, num_of_trials: int = 10):
+    """Function that takes in a multiplication algorithm and averages the execution time
+
+    Parameters
+    ----------
+    multi_alg: MultiplicationAlgorithm
+        A multiplication algorithm that adheres to the said interface
+    num1: int
+        The first number that you are multiplying with 
+    num2: int
+        The second number that you are multiplying with
+    num_of_trials: int
+        The number of trials that you want the algorithm to do; It is set to 10 by default
+    """
     times: list[float] = []
     print(f"You are multiplying: {num1} with {num2} using {multi_alg.get_name()}")
     with open(f"times/{multi_alg.get_name()}_{num1}_{num2}.txt", "w") as f:

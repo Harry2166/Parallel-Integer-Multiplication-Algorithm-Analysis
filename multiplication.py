@@ -51,3 +51,23 @@ class KaratsubaAlgorithm:
 
         return (ac << (mid << 1)) + (ad_plus_bc << mid) + bd
 
+def time_results(multi_alg: MultiplicationAlgorithm, num1: int, num2: int, num_of_trials: int = 10):
+    times: list[float] = []
+    print(f"You are multiplying: {num1} with {num2} using {multi_alg.get_name()}")
+    with open(f"times/{multi_alg.get_name()}_{num1}_{num2}.txt", "w") as f:
+        for _ in range(num_of_trials):
+            start = time.time()
+            multi_alg.multiply(num1, num2)
+            end = time.time()
+            exec_time = (end - start)*10**3
+            f.write(f"{exec_time}\n")
+            times.append(exec_time)
+        average_time = sum(times)/num_of_trials
+        f.write(f"average time = {average_time}")
+
+if __name__ == "__main__":
+    num1 = int(input("Input the first number: "))
+    num2 = int(input("Input the second number: "))
+    time_results(KaratsubaAlgorithm(), num1, num2)
+    time_results(NaiveMultiplication(), num1, num2)
+

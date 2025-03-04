@@ -1,4 +1,5 @@
-# algorithms are from this youtube video: https://www.youtube.com/watch?v=AMl6EJHfUWo&t=1s 
+# algorithms are from this youtube video: https://www.youtube.com/watch?v=AMl6EJHfUWo&t=1s
+# https://bigprimes.org/RSA-challenge
 
 import time
 from typing import Protocol
@@ -85,7 +86,8 @@ def time_results(multi_alg: MultiplicationAlgorithm, num1: int, num2: int, num_o
     """
     times: list[float] = []
     print(f"You are multiplying: {num1} with {num2} using {multi_alg.get_name()}")
-    with open(f"times/{multi_alg.get_name()}_{hex(num1).replace("0x", "")}_{hex(num2).replace("0x", "")}.txt", "w") as f:
+    with open(f"times/{multi_alg.get_name()}.txt", "w") as f:
+        f.write(f"You are multiplying: {num1} with {num2} using {multi_alg.get_name()}")
         for _ in range(num_of_trials):
             start = time.time()
             multi_alg.multiply(num1, num2)

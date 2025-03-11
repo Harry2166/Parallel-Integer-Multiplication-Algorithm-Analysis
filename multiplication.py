@@ -87,15 +87,17 @@ def time_results(multi_alg: MultiplicationAlgorithm, num1: int, num2: int, num_o
     times: list[float] = []
     print(f"You are multiplying: {num1} with {num2} using {multi_alg.get_name()}")
     with open(f"times/{multi_alg.get_name()}.txt", "w") as f:
-        f.write(f"You are multiplying: {num1} with {num2} using {multi_alg.get_name()}")
+        f.write(f"You are multiplying: {num1} with {num2} using {multi_alg.get_name()}\n")
+        ans = 0
         for _ in range(num_of_trials):
             start = time.time()
-            multi_alg.multiply(num1, num2)
+            ans = multi_alg.multiply(num1, num2)
             end = time.time()
             exec_time = (end - start)*10**3
             f.write(f"{exec_time}\n")
             times.append(exec_time)
         average_time = sum(times)/num_of_trials
+        f.write(f"The answer is {ans}\n")
         f.write(f"average time = {average_time}")
 
 if __name__ == "__main__":

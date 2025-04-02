@@ -59,11 +59,28 @@ void printArray(size_t *arr, int size) {
     printf("\n");
 }
 
+size_t* getIntegerInput() {
+    char num[DIGITS];
+    size_t* numArr = (size_t*)malloc(DIGITS * sizeof(size_t));
+
+    printf("Make sure to place leading zeros. Ensure that there are %d digits: ", DIGITS);
+    scanf("%s", num);
+
+    int counter = 0;
+    while (counter < DIGITS && num[counter] != '\0') {
+        numArr[DIGITS - 1 - counter] = (size_t)(num[counter] - '0');
+        counter++;
+    }
+
+    printf("tite\n");
+
+    return numArr; 
+}
+
 int main() {
-    printf("Tiled Quadratic Multiplication: ");
-    size_t h_A[DIGITS] = {5, 4, 3, 2, 1}; // 12345 in reverse
-    size_t h_B[DIGITS] = {6, 5, 4, 3, 2}; // 23456 in reverse
-    size_t h_Result[2 * DIGITS] = {0};  
+    size_t *h_A = getIntegerInput();
+    size_t *h_B = getIntegerInput();
+    size_t h_Result[2 * DIGITS] = {0};
 
     size_t *d_A, *d_B;
     uint64_t *d_C;

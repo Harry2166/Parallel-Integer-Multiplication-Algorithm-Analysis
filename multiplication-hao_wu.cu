@@ -1,9 +1,11 @@
 
+#include <string.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <math.h>
 
-const int DIGITS_MAX_LEN = 32;
+const int DIGITS_MAX_LEN = 64;
 const int BASE = 10;
 
 struct SLargeNum {
@@ -107,13 +109,45 @@ void printNumber(SLargeNum *num) {
   printf("\n");
 }
 
+void inputToSLarge(struct SLargeNum* num) {
+    char input[DIGITS_MAX_LEN + 1];  
+    printf("Enter a positive integer: ");
+    scanf("%s", input);
+
+    int len = strlen(input);
+    num->length = len;
+    num->base = BASE;
+    num->sign = 1;
+    num->header = 0;
+
+    for (int i = 0; i < DIGITS_MAX_LEN; i++) {
+        num->digits[i] = 0;
+    }
+
+    for (int i = 0; i < len; i++) {
+        char ch = input[len - 1 - i];
+        if (ch >= '0' && ch <= '9') {
+            num->digits[i] = ch - '0';
+        } else {
+            printf("Invalid character in input. Exiting.\n");
+            exit(1);
+        }
+    }
+}
+
+
 int main() {
-  printf("Hao Wu's Master Thesis implementation: ");
-  struct SLargeNum num1 = {{0, 5}, 1, 0, 2, BASE}; 
-  struct SLargeNum num2 = {{2}, 1, 0, 1, BASE};
+  printf("Hao Wu's Master Thesis implementation:\n");
+  struct SLargeNum num1;
+  struct SLargeNum num2;
   struct SLargeNum result;
 
+  inputToSLarge(&num1);
+  inputToSLarge(&num2);
+
   struct SLargeNum *num1_d, *num2_d, *result_d;
+  printNumber(&num1);
+  printNumber(&num2);
 
   cudaMalloc((void**)&num1_d, sizeof(SLargeNum));
   cudaMalloc((void**)&num2_d, sizeof(SLargeNum));

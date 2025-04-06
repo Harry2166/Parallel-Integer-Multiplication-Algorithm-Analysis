@@ -2,11 +2,16 @@
 #include <stdio.h>
 #include <cuda.h>
 
-#define DIGITS 10 
+#define DIGITS 50
 #define BLOCK_WIDTH 16 
 
-__global__ void bmulTiled(size_t *Aglb, size_t *Bglb, uint64_t *Cglb) {
-    __shared__ size_t Ash[BLOCK_WIDTH], Bsh[BLOCK_WIDTH]; 
+struct LargeNumber {
+  int digits[DIGITS];
+  int length;
+};
+
+__global__ void bmulTiled(int *Aglb, int *Bglb, uint64_t *Cglb) {
+    __shared__ int Ash[BLOCK_WIDTH], Bsh[BLOCK_WIDTH]; 
     __shared__ uint64_t Csh[2 * BLOCK_WIDTH];
 
     int ii = blockIdx.y * BLOCK_WIDTH, i = threadIdx.y; // 0 <= i < T 
@@ -33,7 +38,7 @@ __global__ void bmulTiled(size_t *Aglb, size_t *Bglb, uint64_t *Cglb) {
     }
 }
 
-__global__ void carryPropagation(uint64_t *Cglb, size_t *Result, int size) {
+__global__ void carryPropagation(uint64_t *Cglb, int *Result, int size) {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     if (idx >= size) return;
 
@@ -49,67 +54,77 @@ __global__ void carryPropagation(uint64_t *Cglb, size_t *Result, int size) {
     }
 }
 
-void printArray(size_t *arr, int size) {
+void printArray(int *arr, int size) {
     bool leadingZero = true;
     for (int i = size - 1; i >= 0; i--) {
         if (arr[i] != 0) leadingZero = false;
-        if (!leadingZero) printf("%llu", arr[i]);
+        if (!leadingZero) printf("%d", arr[i]);
     }
     if (leadingZero) printf("0");
     printf("\n");
 }
 
-size_t* getIntegerInput() {
-    char num[DIGITS];
-    size_t* numArr = (size_t*)malloc(DIGITS * sizeof(size_t));
+void inputToLargeNumber(struct LargeNumber* num) {
+    char input[DIGITS + 1];  
+    printf("Enter a positive integer: ");
+    scanf("%s", input);
 
-    printf("Make sure to place leading zeros. Ensure that there are %d digits: ", DIGITS);
-    scanf("%s", num);
+    int len = strlen(input);
+    num->length = len;
 
-    int counter = 0;
-    while (counter < DIGITS && num[counter] != '\0') {
-        numArr[DIGITS - 1 - counter] = (size_t)(num[counter] - '0');
-        counter++;
+    for (int i = 0; i < DIGITS; i++) {
+        num->digits[i] = 0;
     }
 
-    printf("tite\n");
-
-    return numArr; 
+    for (int i = 0; i < len; i++) {
+        char ch = input[len - 1 - i];
+        if (ch >= '0' && ch <= '9') {
+            num->digits[i] = ch - '0';
+        } else {
+            printf("Invalid character in input. Exiting.\n");
+            exit(1);
+        }
+    }
 }
 
 int main() {
-    size_t *h_A = getIntegerInput();
-    size_t *h_B = getIntegerInput();
-    size_t h_Result[2 * DIGITS] = {0};
+    struct LargeNumber A;
+    struct LargeNumber B;
+    
+    inputToLargeNumber(&A);
+    inputToLargeNumber(&B);
+    int total_length = 2 * (A.length + B.length);
+    int* h_Result = (int*)malloc(total_length*sizeof(int));
 
-    size_t *d_A, *d_B;
+    int *d_A, *d_B;
     uint64_t *d_C;
-    size_t *d_Result;
+    int *d_Result;
 
-    cudaMalloc((void **)&d_A, DIGITS * sizeof(size_t));
-    cudaMalloc((void **)&d_B, DIGITS * sizeof(size_t));
-    cudaMalloc((void **)&d_C, 2 * DIGITS * sizeof(uint64_t));
-    cudaMalloc((void **)&d_Result, 2 * DIGITS * sizeof(size_t));
+    cudaMalloc((void **)&d_A, A.length* sizeof(int));
+    cudaMalloc((void **)&d_B, B.length* sizeof(int));
+    cudaMalloc((void **)&d_C, total_length * sizeof(uint64_t));
+    cudaMalloc((void **)&d_Result, total_length * sizeof(int));
 
-    cudaMemcpy(d_A, h_A, DIGITS * sizeof(size_t), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_B, h_B, DIGITS * sizeof(size_t), cudaMemcpyHostToDevice);
-    cudaMemset(d_C, 0, 2 * DIGITS * sizeof(uint64_t));
-    cudaMemset(d_Result, 0, 2 * DIGITS * sizeof(size_t));
+    cudaMemcpy(d_A, A.digits, A.length * sizeof(int), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_B, B.digits, B.length * sizeof(int), cudaMemcpyHostToDevice);
+    cudaMemset(d_C, 0, total_length * sizeof(uint64_t));
+    cudaMemset(d_Result, 0, total_length * sizeof(int));
 
     dim3 dimBlock(BLOCK_WIDTH, BLOCK_WIDTH);
-    dim3 dimGrid((DIGITS + BLOCK_WIDTH) / BLOCK_WIDTH, (DIGITS + BLOCK_WIDTH - 1) / BLOCK_WIDTH);
+    dim3 dimGrid((A.length + B.length + BLOCK_WIDTH) / BLOCK_WIDTH, (A.length + B.length + BLOCK_WIDTH - 1) / BLOCK_WIDTH);
 
-    printArray(h_A, DIGITS);
-    printArray(h_B, DIGITS);
+    printArray(A.digits, A.length);
+    printArray(A.digits, B.length);
 
     bmulTiled<<<dimGrid, dimBlock>>>(d_A, d_B, d_C);
     cudaDeviceSynchronize();
 
-    carryPropagation<<<(DIGITS + 255) / 256, 256>>>(d_C, d_Result, 2 * DIGITS);
-    cudaMemcpy(h_Result, d_Result, 2 * DIGITS * sizeof(size_t), cudaMemcpyDeviceToHost);
+    carryPropagation<<<((A.length + B.length) + 255) / 256, 256>>>(d_C, d_Result, 2 * (A.length + B.length));
+    cudaMemcpy(h_Result, d_Result, 2 * (A.length + B.length) * sizeof(int), cudaMemcpyDeviceToHost);
 
-    printArray(h_Result, 2 * DIGITS);
+    printArray(h_Result, 2 * (A.length + B.length));
 
+    free(h_Result);
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);

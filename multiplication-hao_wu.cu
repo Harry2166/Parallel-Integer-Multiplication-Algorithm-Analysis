@@ -137,7 +137,7 @@ void inputToSLarge(struct SLargeNum* num) {
 
 
 int main() {
-  printf("Hao Wu's Master Thesis implementation:\n");
+  printf("Hao Wu's Master Thesis Multiplication Implementation:\n");
   struct SLargeNum num1;
   struct SLargeNum num2;
   struct SLargeNum result;

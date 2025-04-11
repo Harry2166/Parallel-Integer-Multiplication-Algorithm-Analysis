@@ -88,6 +88,7 @@ void inputToLargeNumber(struct LargeNumber* num) {
 }
 
 int main() {
+    printf("Tiled Quadratic Multiplication\n");
     struct LargeNumber A;
     struct LargeNumber B;
     

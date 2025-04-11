@@ -70,14 +70,10 @@ void inputToLargeNumber(struct LargeNumber* num) {
     }
 }
 
-int main() {
-    printf("Nontiled Quadratic Multiplication\n");
-    struct LargeNumber A;
-    struct LargeNumber B;
+__host__ void setupMultiply(struct LargeNumber *A_, struct LargeNumber *B_, int total_length){
     
-    inputToLargeNumber(&A);
-    inputToLargeNumber(&B);
-    int total_length = 2 * (A.length + B.length);
+    struct LargeNumber A = *A_;
+    struct LargeNumber B = *B_;
     int* h_Result = (int*)malloc(total_length*sizeof(int));
 
     int *d_A, *d_B;
@@ -98,21 +94,47 @@ int main() {
     dim3 dimGrid((A.length + B.length + BLOCK_WIDTH) / BLOCK_WIDTH, (A.length + B.length + BLOCK_WIDTH - 1) / BLOCK_WIDTH);
 
     printArray(A.digits, A.length);
-    printArray(A.digits, B.length);
+    printArray(B.digits, B.length);
 
+    cudaEvent_t start, stop;
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+
+    cudaEventRecord(start);
     bmul<<<dimGrid, dimBlock>>>(d_A, d_B, d_C);
     cudaDeviceSynchronize();
-
     carryPropagation<<<((A.length + B.length) + 255) / 256, 256>>>(d_C, d_Result, 2 * (A.length + B.length));
+    cudaEventRecord(stop);
+
+    cudaEventSynchronize(start);
+    cudaEventSynchronize(stop);
+
     cudaMemcpy(h_Result, d_Result, 2 * (A.length + B.length) * sizeof(int), cudaMemcpyDeviceToHost);
 
+    float execution_time = 0;
+    cudaEventElapsedTime(&execution_time, start, stop);
+
     printArray(h_Result, 2 * (A.length + B.length));
+    printf("Execution Time: %f\n", execution_time);
 
     free(h_Result);
     cudaFree(d_A);
     cudaFree(d_B);
     cudaFree(d_C);
     cudaFree(d_Result);
+
+}
+
+int main() {
+    printf("Nontiled Quadratic Multiplication\n");
+    struct LargeNumber A;
+    struct LargeNumber B;
+    
+    inputToLargeNumber(&A);
+    inputToLargeNumber(&B);
+    int total_length = 2 * (A.length + B.length);
+
+    setupMultiply(&A, &B, total_length);
 
     return 0;
   }

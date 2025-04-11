@@ -135,15 +135,10 @@ void inputToSLarge(struct SLargeNum* num) {
     }
 }
 
-
-int main() {
-  printf("Hao Wu's Master Thesis Multiplication Implementation:\n");
-  struct SLargeNum num1;
-  struct SLargeNum num2;
-  struct SLargeNum result;
-
-  inputToSLarge(&num1);
-  inputToSLarge(&num2);
+__host__ void setupMultiply(struct SLargeNum *num1_, struct SLargeNum *num2_, struct SLargeNum *result_){
+  struct SLargeNum num1 = *num1_;
+  struct SLargeNum num2 = *num2_;
+  struct SLargeNum result = *result_;
 
   struct SLargeNum *num1_d, *num2_d, *result_d;
   printNumber(&num1);
@@ -156,11 +151,38 @@ int main() {
   cudaMemcpy(num1_d, &num1, sizeof(SLargeNum), cudaMemcpyHostToDevice);
   cudaMemcpy(num2_d, &num2, sizeof(SLargeNum), cudaMemcpyHostToDevice);
 
+  cudaEvent_t start, stop;
+  cudaEventCreate(&start);
+  cudaEventCreate(&stop);
+
+  cudaEventRecord(start);
   multiplication<<<4,4>>>(num1_d, num2_d, result_d);
   cuda_Carry_Update<<<4,4>>>(result_d);
+  cudaEventRecord(stop);
+
+  cudaEventSynchronize(start);
+  cudaEventSynchronize(stop);
+  float execution_time = 0;
+  cudaEventElapsedTime(&execution_time, start, stop);
+
+  printf("Execution Time: %f\n", execution_time);
   cudaMemcpy(&result, result_d, sizeof(SLargeNum), cudaMemcpyDeviceToHost);
   cudaFree(num1_d);
   cudaFree(num2_d);
   cudaFree(result_d);
   printNumber(&result);
+}
+
+
+int main() {
+  printf("Hao Wu's Master Thesis Multiplication Implementation:\n");
+  struct SLargeNum num1;
+  struct SLargeNum num2;
+  struct SLargeNum result;
+
+  inputToSLarge(&num1);
+  inputToSLarge(&num2);
+
+  setupMultiply(&num1, &num2, &result);
+  return 0;
 }

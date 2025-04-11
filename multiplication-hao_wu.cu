@@ -180,9 +180,6 @@ __host__ void setupMultiply(struct SLargeNum *num1_, struct SLargeNum *num2_, st
 
 
 int main() {
-  printf("Hao Wu's Master Thesis Multiplication Implementation:\n");
-  printf("What power of 2 are you selecting? (pick from 3 - 10) [You will be getting numbers that are 2^n bits]: ");
-
   int power_of_2;
   char filename1[50], filename2[50], filename3[50];
   scanf("%d", &power_of_2);
@@ -193,11 +190,6 @@ int main() {
   if (file3 == NULL) {
       printf("Failed to open the file for writing.\n");
       return 1;
-  }
-
-  while (power_of_2 < 3 || power_of_2 > 10) {
-    printf("What power of 2 are you selecting? (pick from 3 - 10): ");
-    scanf("%d", &power_of_2);
   }
 
   sprintf(filename1, "X_%d.txt", power_of_2);

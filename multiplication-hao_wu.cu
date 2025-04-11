@@ -170,7 +170,7 @@ __host__ void setupMultiply(struct SLargeNum *num1_, struct SLargeNum *num2_, st
   float execution_time = 0;
   cudaEventElapsedTime(&execution_time, start, stop);
 
-  printf("Execution Time: %f\n", execution_time);
+  printf("%f,", execution_time);
   cudaMemcpy(&result, result_d, sizeof(SLargeNum), cudaMemcpyDeviceToHost);
   cudaFree(num1_d);
   cudaFree(num2_d);

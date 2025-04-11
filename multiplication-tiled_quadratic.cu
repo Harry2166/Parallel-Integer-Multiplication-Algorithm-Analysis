@@ -139,7 +139,7 @@ __host__ void setupMultiply(struct LargeNumber *A_, struct LargeNumber *B_, int 
     cudaEventElapsedTime(&execution_time, start, stop);
 
     printArrayToFile(h_Result, 2 * (A.length + B.length), file);
-    printf("Execution Time: %f\n", execution_time);
+    printf("%f,", execution_time);
 
     free(h_Result);
     cudaFree(d_A);

@@ -15,7 +15,7 @@ Get-ChildItem -Path . -Filter "*.exe" | ForEach-Object {
         Write-Host "Executing: $exefile"
 
         foreach ($inp in $inputs) {
-            $txtfile = "$folderpath\results_${category}_${inp}.txt"
+            $txtfile = "$folderpath\results_${category}_${inp}.csv"
 
             if (Test-Path $txtfile) { Remove-Item $txtfile }
 
@@ -30,7 +30,7 @@ Get-ChildItem -Path . -Filter "*.exe" | ForEach-Object {
                 Add-Content -Path $txtfile -Value $line
             }
 
-            Write-Host "TXT saved to: $txtfile"
+            Write-Host "CSV saved to: $txtfile"
         }
     }
 }

@@ -185,3 +185,4 @@ cython_debug/
 *.exp
 *.lib
 *.txt
+*.csv

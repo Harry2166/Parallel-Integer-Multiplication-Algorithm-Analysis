@@ -109,10 +109,17 @@ void printNumber(SLargeNum *num) {
   printf("\n");
 }
 
-void inputToSLarge(struct SLargeNum* num) {
-    char input[DIGITS_MAX_LEN + 1];  
-    printf("Enter a positive integer: ");
-    scanf("%s", input);
+void printNumberToFile (SLargeNum *num, FILE *file) {
+  for (int i = num->length - 1; i > -1; i--){
+    fprintf(file, "%d", num->digits[i]);
+  }
+  fprintf(file, "\n");
+}
+
+void inputToSLarge(struct SLargeNum* num, const char *input) {
+    // char input[DIGITS_MAX_LEN + 1];  
+    // printf("Enter a positive integer: ");
+    // scanf("%s", input);
 
     int len = strlen(input);
     num->length = len;
@@ -135,14 +142,12 @@ void inputToSLarge(struct SLargeNum* num) {
     }
 }
 
-__host__ void setupMultiply(struct SLargeNum *num1_, struct SLargeNum *num2_, struct SLargeNum *result_){
+__host__ void setupMultiply(struct SLargeNum *num1_, struct SLargeNum *num2_, struct SLargeNum *result_, FILE *file){
   struct SLargeNum num1 = *num1_;
   struct SLargeNum num2 = *num2_;
   struct SLargeNum result = *result_;
 
   struct SLargeNum *num1_d, *num2_d, *result_d;
-  printNumber(&num1);
-  printNumber(&num2);
 
   cudaMalloc((void**)&num1_d, sizeof(SLargeNum));
   cudaMalloc((void**)&num2_d, sizeof(SLargeNum));
@@ -170,19 +175,72 @@ __host__ void setupMultiply(struct SLargeNum *num1_, struct SLargeNum *num2_, st
   cudaFree(num1_d);
   cudaFree(num2_d);
   cudaFree(result_d);
-  printNumber(&result);
+  printNumberToFile(&result, file);
 }
 
 
 int main() {
   printf("Hao Wu's Master Thesis Multiplication Implementation:\n");
-  struct SLargeNum num1;
-  struct SLargeNum num2;
-  struct SLargeNum result;
+  printf("What power of 2 are you selecting? (pick from 3 - 10) [You will be getting numbers that are 2^n bits]: ");
 
-  inputToSLarge(&num1);
-  inputToSLarge(&num2);
+  int power_of_2;
+  char filename1[50], filename2[50], filename3[50];
+  scanf("%d", &power_of_2);
+  char buffer[DIGITS_MAX_LEN];
 
-  setupMultiply(&num1, &num2, &result);
+  sprintf(filename3, "results_haowu_%d.txt", power_of_2);
+  FILE *file3 = fopen(filename3, "w");
+  if (file3 == NULL) {
+      printf("Failed to open the file for writing.\n");
+      return 1;
+  }
+
+  while (power_of_2 < 3 || power_of_2 > 10) {
+    printf("What power of 2 are you selecting? (pick from 3 - 10): ");
+    scanf("%d", &power_of_2);
+  }
+
+  sprintf(filename1, "X_%d.txt", power_of_2);
+
+  FILE *file1 = fopen(filename1, "r");
+  if (file1 == NULL) {
+     printf("Failed to open the file for reading.\n");
+     return 1;
+  }
+
+  struct SLargeNum X[25];
+  int num_elements_X = 0;
+
+  while (fscanf(file1, "%s", buffer) != EOF) {
+    inputToSLarge(&X[num_elements_X], buffer);
+    num_elements_X++;
+  }
+
+  sprintf(filename2, "Y_%d.txt", power_of_2);
+
+  FILE *file2 = fopen(filename2, "r");
+  if (file2 == NULL) {
+     printf("Failed to open the file for reading.\n");
+     return 1;
+  }
+
+  struct SLargeNum Y[25];
+  int num_elements_Y = 0;
+
+  while (fscanf(file2, "%s", buffer) != EOF) {
+    inputToSLarge(&Y[num_elements_Y], buffer);
+    num_elements_Y++;
+  }
+
+  for (int i = 0; i < 25; i++){
+    struct SLargeNum result;
+    struct SLargeNum num1 = X[i];
+    struct SLargeNum num2 = Y[i];
+    setupMultiply(&num1, &num2, &result, file3);
+  }
+
+  fclose(file1);
+  fclose(file2);
+  fclose(file3);
   return 0;
 }

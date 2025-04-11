@@ -47,10 +47,20 @@ void printArray(int *arr, int size) {
     printf("\n");
 }
 
-void inputToLargeNumber(struct LargeNumber* num) {
-    char input[DIGITS + 1];  
-    printf("Enter a positive integer: ");
-    scanf("%s", input);
+void printArrayToFile(int *arr, int size, FILE *file) {
+    bool leadingZero = true;
+    for (int i = size - 1; i >= 0; i--) {
+        if (arr[i] != 0) leadingZero = false;
+        if (!leadingZero) fprintf(file, "%d", arr[i]);
+    }
+    if (leadingZero) fprintf(file, "0");
+    fprintf(file, "\n");
+}
+
+void inputToLargeNumber(struct LargeNumber* num, const char *input) {
+    // char input[DIGITS + 1];  
+    // printf("Enter a positive integer: ");
+    // scanf("%s", input);
 
     int len = strlen(input);
     num->length = len;
@@ -70,7 +80,7 @@ void inputToLargeNumber(struct LargeNumber* num) {
     }
 }
 
-__host__ void setupMultiply(struct LargeNumber *A_, struct LargeNumber *B_, int total_length){
+__host__ void setupMultiply(struct LargeNumber *A_, struct LargeNumber *B_, int total_length, FILE *file){
     
     struct LargeNumber A = *A_;
     struct LargeNumber B = *B_;
@@ -93,9 +103,6 @@ __host__ void setupMultiply(struct LargeNumber *A_, struct LargeNumber *B_, int 
     dim3 dimBlock(BLOCK_WIDTH, BLOCK_WIDTH);
     dim3 dimGrid((A.length + B.length + BLOCK_WIDTH) / BLOCK_WIDTH, (A.length + B.length + BLOCK_WIDTH - 1) / BLOCK_WIDTH);
 
-    printArray(A.digits, A.length);
-    printArray(B.digits, B.length);
-
     cudaEvent_t start, stop;
     cudaEventCreate(&start);
     cudaEventCreate(&stop);
@@ -114,7 +121,7 @@ __host__ void setupMultiply(struct LargeNumber *A_, struct LargeNumber *B_, int 
     float execution_time = 0;
     cudaEventElapsedTime(&execution_time, start, stop);
 
-    printArray(h_Result, 2 * (A.length + B.length));
+    printArrayToFile(h_Result, 2 * (A.length + B.length), file);
     printf("Execution Time: %f\n", execution_time);
 
     free(h_Result);
@@ -122,19 +129,67 @@ __host__ void setupMultiply(struct LargeNumber *A_, struct LargeNumber *B_, int 
     cudaFree(d_B);
     cudaFree(d_C);
     cudaFree(d_Result);
-
 }
 
 int main() {
     printf("Nontiled Quadratic Multiplication\n");
-    struct LargeNumber A;
-    struct LargeNumber B;
-    
-    inputToLargeNumber(&A);
-    inputToLargeNumber(&B);
-    int total_length = 2 * (A.length + B.length);
+    printf("What power of 2 are you selecting? (pick from 3 - 10) [You will be getting numbers that are 2^n bits]: ");
 
-    setupMultiply(&A, &B, total_length);
+    int power_of_2;
+    char filename1[50], filename2[50], filename3[50];
+    scanf("%d", &power_of_2);
+    char buffer[DIGITS];
+
+    sprintf(filename3, "results_nontiled-quad_%d.txt", power_of_2);
+    FILE *file3 = fopen(filename3, "w");
+    if (file3 == NULL) {
+        printf("Failed to open the file for writing.\n");
+        return 1;
+    }
+
+    while (power_of_2 < 3 || power_of_2 > 10) {
+      printf("What power of 2 are you selecting? (pick from 3 - 10): ");
+      scanf("%d", &power_of_2);
+    }
+
+    sprintf(filename1, "X_%d.txt", power_of_2);
+
+    FILE *file1 = fopen(filename1, "r");
+    if (file1 == NULL) {
+       printf("Failed to open the file for reading.\n");
+       return 1;
+    }
+
+    struct LargeNumber X[25];
+    int num_elements_X = 0;
+
+    while (fscanf(file1, "%s", buffer) != EOF) {
+      inputToLargeNumber(&X[num_elements_X], buffer);
+      num_elements_X++;
+    }
+
+    sprintf(filename2, "Y_%d.txt", power_of_2);
+
+    FILE *file2 = fopen(filename2, "r");
+    if (file2 == NULL) {
+       printf("Failed to open the file for reading.\n");
+       return 1;
+    }
+
+    struct LargeNumber Y[25];
+    int num_elements_Y = 0;
+
+    while (fscanf(file2, "%s", buffer) != EOF) {
+      inputToLargeNumber(&Y[num_elements_Y], buffer);
+      num_elements_Y++;
+    }
+
+    for (int i = 0; i < 25; i++){
+      struct LargeNumber num1 = X[i];
+      struct LargeNumber num2 = Y[i];
+      int total_length = 2 * (num1.length + num2.length);
+      setupMultiply(&num1, &num2, total_length, file3);
+    }
 
     return 0;
   }

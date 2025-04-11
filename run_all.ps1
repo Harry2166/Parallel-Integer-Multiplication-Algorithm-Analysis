@@ -34,3 +34,5 @@ Get-ChildItem -Path . -Filter "*.exe" | ForEach-Object {
         }
     }
 }
+python gather_all_results.py 
+python plotting_all_results.py

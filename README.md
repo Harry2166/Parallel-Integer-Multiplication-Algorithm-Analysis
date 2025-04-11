@@ -1,5 +1,5 @@
 # parallel-multiplication-algorithms-analysis
-0. Create the directories named `results` and `times`
+0. Create the directories named `results`, `plots`, and `times`
 1. Compile each CUDA script using  `nvcc multiplication-{category}.cu -o multiplication-{category}` where category is either "hao_wu", "nontiled_quadratic", "tiled_quadratic" (Ensure that the CUDA compiler is installed).
 2. Ensure that you have `X_{inp}.txt` and `Y_{inp}` where `inp` is an integer between and including 3 and 10.
 3. Run `./run_all.ps1`.

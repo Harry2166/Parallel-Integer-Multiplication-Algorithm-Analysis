@@ -21,19 +21,19 @@ __global__ void bmul(int *Aglb, int *Bglb, uint64_t *Cglb) {
 
 }
 
-__global__ void carryPropagation(uint64_t *Cglb, int *Result, int size) {
+__global__ void carryPropagation(uint64_t *Cglb, int *result, int size) {
     int idx = threadIdx.x + blockIdx.x * blockDim.x;
     if (idx >= size) return;
 
     uint64_t carry = 0;
     for (int i = 0; i < size; i++) {
         uint64_t temp = Cglb[i] + carry;
-        Result[i] = temp % 10; 
+        result[i] = temp % 10; 
         carry = temp / 10;      
     }
 
     if (carry > 0 && size < 2 * DIGITS) { 
-        Result[size] = carry;
+        result[size] = carry;
     }
 }
 

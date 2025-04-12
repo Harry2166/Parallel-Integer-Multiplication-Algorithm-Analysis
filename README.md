@@ -5,3 +5,4 @@
 3. Run `./run_all.ps1`.
 4. Refer to `/times/` for the total timed results of each result of iterations where each column is the results for each iteration.
 6. Refer to `/results/` where there are files named `results-{category}-{inp}.txt` for the products of inputs in `X_{inp}` and `Y_{inp}` where category and inp refer to the same as above.
+7. Refer to `/plots/` for the plots of each possible combination worth comparing.

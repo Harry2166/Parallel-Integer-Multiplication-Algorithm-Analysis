@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <math.h>
 
-const int DIGITS_MAX_LEN = 310;
+const int DIGITS_MAX_LEN = 750;
 const int BASE = 10;
 
 struct SLargeNum {

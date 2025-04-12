@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <cuda.h>
 
-#define DIGITS 310 
+#define DIGITS 750
 #define BLOCK_WIDTH 16 
 
 struct LargeNumber {

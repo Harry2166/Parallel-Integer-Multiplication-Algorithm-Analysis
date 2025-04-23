@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 df = pd.read_csv("final_results.csv")
 df = df.sort_values(by="mean", ascending=False)
+print(df)
 
 test_sets = ["hao_wu", "nontiled_quadratic", "tiled_quadratic"]
 
@@ -20,6 +21,7 @@ def get_mean_of_all():
     plt.xticks(rotation=45, ha="right")
     plt.tight_layout()
     plt.savefig(f'plots/plot_all_means.png')
+    plt.close()
 
 def get_mean_of_test_set(test_set: str):
     print(f"getting the means of {test_set}")
@@ -32,6 +34,7 @@ def get_mean_of_test_set(test_set: str):
     plt.xticks(rotation=45, ha="right")
     plt.tight_layout()
     plt.savefig(f'plots/plot_{test_set}.png')
+    plt.close()
 
 def get_mean_of_power(power: int):
     print(f"getting the means of powers of {power}")
@@ -44,12 +47,28 @@ def get_mean_of_power(power: int):
     plt.xticks(rotation=45, ha="right")
     plt.tight_layout()
     plt.savefig(f'plots/plot_powers_of_{power}.png')
+    plt.close()
 
+def get_accuracy(test_set_or_power: str|int):
+    print(f"getting the accuracy of {test_set_or_power}") 
+    plt.figure(figsize=(10, 6))
+    matching_rows = df[df["test_set"].str.contains(f"_{test_set_or_power}")]
+    plt.bar(matching_rows["test_set"], matching_rows["accuracy"], color=colors)
+    plt.xlabel("Set")
+    plt.ylabel("Accuracy")
+    plt.title("Performance Summary")
+    plt.xticks(rotation=45, ha="right")
+    plt.tight_layout()
+    plt.savefig(f'plots/plot_accuracy_{test_set_or_power}.png')
+    plt.close()
 
 if __name__ == "__main__":
     get_mean_of_all()
     for test_set in test_sets:
         get_mean_of_test_set(test_set)
+        get_accuracy(test_set)
     for i in range(3, 11):
         get_mean_of_power(i)
+        get_accuracy(i)
+
 

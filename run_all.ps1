@@ -34,5 +34,8 @@ Get-ChildItem -Path . -Filter "*.exe" | ForEach-Object {
         }
     }
 }
+
+python multiplication-python_builtin.py 
+python get_accuracy.py 
 python gather_all_results.py 
 python plotting_all_results.py

@@ -1,0 +1,22 @@
+
+"""
+Read in the X files and Y files and multiply them together -> create an accuracy checker that compares this result to the one calculated by CUDA
+"""
+
+n = int(input("Give me number (3-10): "))
+X_file = f"X_{n}.txt"
+Y_file = f"Y_{n}.txt"
+
+with open(X_file, 'r', encoding='utf-8') as file:
+    X_content = file.read()
+
+with open(Y_file, 'r', encoding='utf-8') as file:
+    Y_content = file.read()
+
+X_nums = [int(x) for x in X_content.strip().split("\n") if x]
+Y_nums = [int(x) for x in Y_content.strip().split("\n") if x]
+
+with open(f'results/python-results_{n}.txt', 'w', encoding='utf-8') as file:
+    for idx, _ in enumerate(X_nums):
+        result = X_nums[idx] * Y_nums[idx]
+        file.write(f"{result}\n")

@@ -161,8 +161,12 @@ __host__ void setupMultiply(struct SLargeNum *num1_, struct SLargeNum *num2_, st
   cudaEventCreate(&stop);
 
   cudaEventRecord(start);
-  multiplication<<<4,4>>>(num1_d, num2_d, result_d);
-  cuda_Carry_Update<<<4,4>>>(result_d);
+  int num_threads = num1.length + num2.length - 1;
+  int threads_per_block = 256;
+  int blocks = (num_threads + threads_per_block - 1) / threads_per_block;
+  multiplication<<<blocks, threads_per_block>>>(num1_d, num2_d, result_d);
+  cudaDeviceSynchronize();
+  cuda_Carry_Update<<<1,1>>>(result_d);
   cudaEventRecord(stop);
 
   cudaEventSynchronize(start);

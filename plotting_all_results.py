@@ -33,13 +33,11 @@ def get_mean_of_test_set(test_set: str):
     plt.title(f"Performance Summary of {test_set}")
     plt.xticks(rotation=45, ha="right")
     bars = plt.bar(matching_rows["test_set"], matching_rows["mean"], color=colors)
-    plt.gca().yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x:.10f}'))  # Set full precision
-    
     # Annotate each bar with the value using zip
     combined_values = matching_rows["mean"].apply(lambda x: f'{x:.10f}')
     for bar, value in zip(bars, combined_values):
         plt.text(bar.get_x() + bar.get_width()/2, bar.get_height(), value, 
-                 ha='center', va='bottom', fontsize=8)
+                 ha='center', va='bottom', fontsize=10)
     plt.tight_layout()
     plt.savefig(f'plots/plot_{test_set}.png')
     plt.close()
@@ -54,13 +52,11 @@ def get_mean_of_power(power: int):
     plt.title(f"Performance Summary of Power {power}")
     plt.xticks(rotation=45, ha="right")
     bars = plt.bar(matching_rows["test_set"], matching_rows["mean"], color=colors)
-    plt.gca().yaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f'{x:.10f}'))  # Set full precision
-    
     # Annotate each bar with the value using zip
     combined_values = matching_rows["mean"].apply(lambda x: f'{x:.10f}')
     for bar, value in zip(bars, combined_values):
         plt.text(bar.get_x() + bar.get_width()/2, bar.get_height(), value, 
-                 ha='center', va='bottom', fontsize=8)
+                 ha='center', va='bottom', fontsize=10)
     plt.tight_layout()
     plt.savefig(f'plots/plot_powers_of_{power}.png')
     plt.close()

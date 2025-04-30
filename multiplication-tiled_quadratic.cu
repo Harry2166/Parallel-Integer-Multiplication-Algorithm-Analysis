@@ -127,7 +127,7 @@ __host__ void setupMultiply(struct LargeNumber *A_, struct LargeNumber *B_, int 
     cudaEventRecord(start);
     bmulTiled<<<dimGrid, dimBlock>>>(d_A, d_B, d_C);
     cudaDeviceSynchronize();
-    carryPropagation<<<((A.length + B.length) + 255) / 256, 256>>>(d_C, d_Result, 2 * (A.length + B.length));
+    carryPropagation<<<1,1>>>(d_C, d_Result, 2 * (A.length + B.length));
     cudaEventRecord(stop);
 
     cudaEventSynchronize(start);

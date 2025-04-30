@@ -21,7 +21,7 @@ Get-ChildItem -Path . -Filter "*.exe" | ForEach-Object {
 
         foreach ($inp in $inputs) {
             $txtfile = "$folderpath\results_${category}_${inp}.csv"
-            if ($inp < 10) {
+            if ($inp -lt 10) {
               $txtfile = "$folderpath\results_${category}_0${inp}.csv"
             }
 

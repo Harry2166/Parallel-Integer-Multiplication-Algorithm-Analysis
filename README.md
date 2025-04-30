@@ -1,6 +1,6 @@
 # parallel-multiplication-algorithms-analysis
 0. Create the directories named `results`, `plots`, `accuracy`, and `times`
-1. Compile each CUDA script using  `nvcc multiplication-{category}.cu -o multiplication-{category}` where category is either "hao_wu", "nontiled_quadratic", "tiled_quadratic" (Ensure that the CUDA compiler is installed).
+1. Ensure that the CUDA compiler is installed.
 2. Ensure that you have `X_{inp}.txt` and `Y_{inp}` where `inp` is an integer between and including 3 and 10.
 3. In order to adhere to the odd-even scheming, please change the following details for each file:
    - In `run_all.ps1`, change `$inputs` to only consider odd/even numbers within the range(3,10)

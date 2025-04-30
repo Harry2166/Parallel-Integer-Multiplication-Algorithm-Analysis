@@ -45,7 +45,7 @@ def get_mean_of_test_set(test_set: str):
 def get_mean_of_power(power: int):
     print(f"getting the means of powers of {power}")
     plt.figure(figsize=(10, 6))
-    matching_rows = df[df["test_set"].str.contains(f"_{power}")].sort_values(by="test_set")
+    matching_rows = df[df["test_set"].str.contains(f"{power}")].sort_values(by="test_set")
     plt.bar(matching_rows["test_set"], matching_rows["mean"], color=colors)
     plt.xlabel("Set")
     plt.ylabel("Mean Time")
@@ -64,7 +64,7 @@ def get_mean_of_power(power: int):
 def get_accuracy(test_set_or_power: str|int):
     print(f"getting the accuracy of {test_set_or_power}") 
     plt.figure(figsize=(10, 6))
-    matching_rows = df[df["test_set"].str.contains(f"_{test_set_or_power}")].sort_values(by="test_set")
+    matching_rows = df[df["test_set"].str.contains(f"{test_set_or_power}")].sort_values(by="test_set")
     plt.bar(matching_rows["test_set"], matching_rows["accuracy"], color=colors)
     plt.xlabel("Set")
     plt.ylabel("Accuracy")

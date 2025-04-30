@@ -154,7 +154,11 @@ int main() {
     scanf("%d", &power_of_2);
     char buffer[DIGITS];
 
-    sprintf(filename3, "results/results-tiled_quadratic_%d.txt", power_of_2);
+    if (power_of_2 < 10) {
+      sprintf(filename3, "results/results-tiled_quadratic_0%d.txt", power_of_2);
+    else {
+      sprintf(filename3, "results/results-tiled_quadratic_%d.txt", power_of_2);
+    }
     FILE *file3 = fopen(filename3, "w");
     if (file3 == NULL) {
         printf("Failed to open the file for writing.\n");

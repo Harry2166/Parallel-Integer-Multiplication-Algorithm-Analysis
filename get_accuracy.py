@@ -7,8 +7,8 @@ test_sets = ["hao_wu", "nontiled_quadratic", "tiled_quadratic"]
 
 for n in range(3,11):
     for test in test_sets:
-        test_file = f"results/results-{test}_{n}.txt"
-        python_file = f"results/python-results_{n}.txt"
+        test_file = f"results/results-{test}_0{n}.txt" if n < 10 else f"results/results-{test}_{n}.txt"
+        python_file = f"results/python-results_0{n}.txt" if n < 10 else f"results/python-results_{n}.txt"
 
         with open(test_file, 'r', encoding='utf-8') as file:
             test_content = file.read()

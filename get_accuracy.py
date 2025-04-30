@@ -18,8 +18,9 @@ for n in range(3,11):
 
         test_nums = test_content.strip().split("\n")
         python_nums = python_content.strip().split("\n")
+        file_name = f'accuracy/results_{test}_0{n}.csv' if n < 10 else f'accuracy/results_{test}_{n}.csv'
 
-        with open(f'accuracy/results_{test}_{n}.csv', 'w', encoding='utf-8') as file:
+        with open(file_name, 'w', encoding='utf-8') as file:
             for i, _ in enumerate(test_nums):
                 similarity = string_similarity(test_nums[i], python_nums[i])
                 file.write(f"{similarity * 100:.2f}\n")

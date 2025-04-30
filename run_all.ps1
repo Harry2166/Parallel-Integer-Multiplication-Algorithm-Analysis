@@ -8,8 +8,8 @@ if (-not (Test-Path -Path $folderpath)) {
 $inputs = @(3,4,5,6,7,8,9,10)
 $categories= @("hao_wu", "nontiled_quadratic", "tiled_quadratic")
 
-foreach ($category in categories){
-  nvcc multiplication-{$category}.cu -o multiplication-{$category}
+foreach ($category in $categories){
+  nvcc "multiplication-$category.cu" -o "multiplication-$category"
 }
 
 Get-ChildItem -Path . -Filter "*.exe" | ForEach-Object {

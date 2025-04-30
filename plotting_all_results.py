@@ -78,9 +78,9 @@ if __name__ == "__main__":
     get_mean_of_all()
     for test_set in test_sets:
         get_mean_of_test_set(test_set)
-        # get_accuracy(test_set)
+        get_accuracy(test_set)
     for i in range(3, 11):
         get_mean_of_power(i)
-        # get_accuracy(i)
+        get_accuracy(i)
 
 

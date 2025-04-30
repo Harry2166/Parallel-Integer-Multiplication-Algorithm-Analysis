@@ -139,7 +139,7 @@ int main() {
 
     if (power_of_2 < 10) {
       sprintf(filename3, "results/results-nontiled_quadratic_0%d.txt", power_of_2);
-    else {
+    } else {
       sprintf(filename3, "results/results-nontiled_quadratic_%d.txt", power_of_2);
     }
     FILE *file3 = fopen(filename3, "w");

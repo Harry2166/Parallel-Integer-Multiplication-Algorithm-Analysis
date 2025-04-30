@@ -15,7 +15,7 @@ for n in range(3,11):
 
     X_nums = [int(x) for x in X_content.strip().split("\n") if x]
     Y_nums = [int(x) for x in Y_content.strip().split("\n") if x]
-    file_name = f'results/python-result_0{n}' if n < 10 else  f'results/python-result_{n}'
+    file_name = f'results/python-results_0{n}.txt' if n < 10 else  f'results/python-results_{n}.txt'
 
     with open(file_name, 'w', encoding='utf-8') as file:
         for idx, _ in enumerate(X_nums):

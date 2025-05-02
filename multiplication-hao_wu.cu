@@ -183,10 +183,10 @@ __host__ void setupMultiply(struct SLargeNum *num1_, struct SLargeNum *num2_, st
 }
 
 
-int main() {
-  int power_of_2;
+int main(int argc, char *argv[]) {
+  int power_of_2 = atoi(argv[1]);
   char filename1[50], filename2[50], filename3[50];
-  scanf("%d", &power_of_2);
+  //scanf("%d", &power_of_2);
   char buffer[DIGITS_MAX_LEN];
 
   if (power_of_2 < 10) {

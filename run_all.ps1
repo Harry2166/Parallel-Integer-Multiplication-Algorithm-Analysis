@@ -31,7 +31,7 @@ Get-ChildItem -Path . -Filter "*.exe" | ForEach-Object {
 
             for ($i = 1; $i -le 10; $i++) {
                 Write-Host "Run #$i of $exefile with input $inp"
-                $output = $inp | & $_.FullName
+                $output = & $_.FullName $inp
                 Write-Host $output
 
                 $line = "$i,$output"

@@ -70,6 +70,12 @@ def get_accuracy(test_set_or_power: str|int):
     plt.ylabel("Accuracy")
     plt.title("Performance Summary")
     plt.xticks(rotation=45, ha="right")
+    bars = plt.bar(matching_rows["test_set"], matching_rows["accuracy"], color=colors)
+    # Annotate each bar with the value using zip
+    combined_values = matching_rows["accuracy"].apply(lambda x: f'{x:.10f}')
+    for bar, value in zip(bars, combined_values):
+        plt.text(bar.get_x() + bar.get_width()/2, bar.get_height(), value, 
+                 ha='center', va='bottom', fontsize=10)
     plt.tight_layout()
     plt.savefig(f'plots/plot_accuracy_{test_set_or_power}.png')
     plt.close()

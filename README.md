@@ -9,6 +9,8 @@ The metrics used to analyze the kernels were: Execution Time, Accuracy, CGMA Rat
 
 In order to analyze the occupancy of the CUDA kernels, [Nsight Compute](https://developer.nvidia.com/nsight-compute) was used, mainly using the `sm__warps_active.avg.pct_of_peak_sustained_active` metric, which presents the _achieved occupancy_ of a kernel. Execution time and accuracy were recorded and plotted during the execution phase of the project, while CGMA Ratio was analyzed by analyzing the CUDA kernel code.
 
+You may view the associated report [here](https://typst.app/project/r1mvuaIWIwmmWqqbEtw142).
+
 ## Getting Started
 
 ### Windows
